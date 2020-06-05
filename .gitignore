@@ -1,0 +1,8 @@
+/.idea/
+/venv/
+config.ini
+logger.log
+*.dll
+/dist/
+/build/
+/__pycache__/
