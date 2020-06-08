@@ -6,3 +6,4 @@ logger.log
 /dist/
 /build/
 /__pycache__/
+upx.exe
