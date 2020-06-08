@@ -31,4 +31,5 @@ exe = EXE(pyz,
           upx=False,
           upx_exclude=[],
           runtime_tmpdir=None,
-          console=False )
+          console=False,
+          icon='C:\\projects\\python\\GetTagIdPyQt\\angh9-giaqj-002.ico')

@@ -39,7 +39,7 @@ class Ui_Form(object):
 
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate
-        Form.setWindowTitle(_translate("Form", "Form"))
+        Form.setWindowTitle(_translate("Form", "标签检测程序"))
         self.label.setText(_translate("Form", "检测到标签数量"))
         self.ResetButton.setText(_translate("Form", "重新检测"))
         self.CloseButton.setText(_translate("Form", "退出"))
