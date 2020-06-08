@@ -4,22 +4,22 @@ from configparser import ConfigParser
 
 # 连接数据库模块
 def get_tag_id(mac_id):
-    print('1')
+
     cfg = ConfigParser()
     cfg.read('config.ini')
-    print('2')
+
     ip = cfg.get('DB', 'ip')
     port = cfg.get('DB', 'port')
     db = cfg.get('DB', 'db')
     username = cfg.get('DB', 'username')
     pwd = cfg.get('DB', 'pwd')
-    print('3')
+
     dsn = cx.makedsn(ip, port, db)
     try:
         connection = cx.connect(username, pwd, dsn)
-    except:
+    except OSError as err:
+        print(err)
         print('连接错误')
-    print('4')
     cursor = connection.cursor()
 
     sql = "SELECT BLUETOOTHID FROM UWB_T_UWBTAGS where UWBTAGID = " + str(mac_id)
@@ -31,7 +31,8 @@ def get_tag_id(mac_id):
         return data[0]
     else:
         return '未定义'
-    # datas = cursor.fetchall()
+
+
 
 # if __name__ == '__main__':
 #

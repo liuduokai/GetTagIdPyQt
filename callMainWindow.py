@@ -57,6 +57,7 @@ async def consumer_handler(myWin):
 
                 # 查询MAC对应的TAG ID
                 try:
+                    # print(tag_mac)
                     tag_id = con_oracle.get_tag_id(tag_mac)
                 except OSError as err:
                     logging.error("获取tag id出现错误")
@@ -79,11 +80,11 @@ class MyMainForm(QMainWindow, Ui_Form):
 
     def restart(self):
         program = QApplication.applicationFilePath()
-        print(program)
+        # print(program)
         arguments = QApplication.arguments()
-        print(arguments)
+        # print(arguments)
         workingDirectory = QDir.currentPath()
-        print(workingDirectory)
+        # print(workingDirectory)
         QProcess.startDetached(program, arguments, workingDirectory)
         # QProcess.startDetached(program)
         self.close()
@@ -99,7 +100,6 @@ def start_loop(loop):
 
 
 def main(myWin):
-    print("test")
     coroutine1 = consumer_handler(myWin)
     new_loop = asyncio.new_event_loop()  # 在当前线程下创建时间循环，（未启用），在start_loop里面启动它
     t = threading.Thread(target=start_loop, args=(new_loop,))  # 通过当前线程开启新的线程去启动事件循环
