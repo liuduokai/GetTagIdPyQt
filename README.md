@@ -1,5 +1,6 @@
 # GetTagIdPyQt
-根据获取到的基站的定位标签的MAC信息统计检测到的标签数量，同时显示标签的ID。使用PyQt实现了图形化界面
+* https://github.com/liuduokai/GetTagMAC的图形化实现
+* 根据获取到的UWB基站的定位标签的MAC信息统计检测到的标签数量，同时显示标签的ID。使用PyQt实现了图形化界面
 
 ## 文件
 * callMainWindow.py:调用界面布局文件生成界面
