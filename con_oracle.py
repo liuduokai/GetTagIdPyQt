@@ -21,11 +21,11 @@ def get_tag_id(mac_id):
         print(err)
         print('连接错误')
     cursor = connection.cursor()
-
+    print("数据库连接成功")
     sql = "SELECT BLUETOOTHID FROM UWB_T_UWBTAGS where UWBTAGID = " + str(mac_id)
     cursor.execute(sql)
     data = cursor.fetchone()  # 获取一条数据
-
+    print("获取数据成功")
     # print(type(data))
     if data:
         return data[0]
@@ -34,35 +34,35 @@ def get_tag_id(mac_id):
 
 
 
-# if __name__ == '__main__':
-#
-#     cfg = ConfigParser()
-#     cfg.read('config.ini')
-#
-#     ip = cfg.get('DB', 'ip')
-#     port = cfg.get('DB', 'port')
-#     db = cfg.get('DB', 'db')
-#     username = cfg.get('DB', 'username')
-#     pwd = cfg.get('DB', 'pwd')
-#
-#     print(ip, port, db, username, pwd)
-#
-#     dsn = cx.makedsn(ip, port, db)
-#     connection = cx.connect(username, pwd, dsn)
-#
-#     print("oracle版本：", connection.version)
-#     cursor = connection.cursor()
-#
-#     cursor.execute("SELECT * FROM UWB_T_UWBTAGS where UWBTAGID = ")
-#
-#     datas = cursor.fetchone()  # 获取一条数据
-#     datas = cursor.fetchall()
-#
-#     for data in datas:
-#         print(data)
-#
-#     cursor.close()
-#     connection.close()
+if __name__ == '__main__':
+
+    cfg = ConfigParser()
+    cfg.read('config.ini')
+
+    ip = cfg.get('DB', 'ip')
+    port = cfg.get('DB', 'port')
+    db = cfg.get('DB', 'db')
+    username = cfg.get('DB', 'username')
+    pwd = cfg.get('DB', 'pwd')
+
+    print(ip, port, db, username, pwd)
+
+    dsn = cx.makedsn(ip, port, db)
+    connection = cx.connect(username, pwd, dsn)
+
+    print("oracle版本：", connection.version)
+    cursor = connection.cursor()
+
+    cursor.execute("SELECT * FROM UWB_T_UWBTAGS")
+
+    datas = cursor.fetchone()  # 获取一条数据
+    datas = cursor.fetchall()
+
+    for data in datas:
+        print(data)
+
+    cursor.close()
+    connection.close()
 
 # con = cx.connect('test_db', 'pwd', '127.0.0.1:1521/ORCL')
 # # 创建游标

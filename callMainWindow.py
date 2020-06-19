@@ -11,6 +11,15 @@ import asyncio
 import websockets
 
 
+# 获取标签电量信息
+def get_battery_info(message):
+    m_hex = message.hex()
+    battery_hex = m_hex[32:34]
+    battery_dec = int(battery_hex, 16)
+    return battery_dec
+
+
+# 获取输出版本的MAC
 def get_print_version_mac(message):
     m_hex = message.hex()
     tag_id_p_rev = m_hex[16:28]
@@ -27,6 +36,7 @@ def get_print_version_mac(message):
     return tag_id_p
 
 
+# 主循环函数
 async def consumer_handler(myWin):
     async with websockets.connect('ws://10.44.68.179:6432/ws', ping_interval=None) as websocket:
         async for message in websocket:
@@ -46,15 +56,26 @@ async def consumer_handler(myWin):
                 logging.error(message)
                 logging.error(tag_mac)
 
-            # 是否是新检测到的标签
-            if tag_mac in tag_mac_set:
-                pass
-            else:
-                tag_mac_set.add(tag_mac)
-                myWin.addtext('********检测到新的标签********')
-                myWin.addtext('编号:'+str(len(tag_mac_set)))
-                myWin.addtext('tag MAC:' + tag_mac_p)
+            # 获取电量信息
+            try:
+                tag_battery_info = get_battery_info(message)
+            except OSError as err:
+                logging.error("获取battery info出现错误")
+                logging.error(err)
+                logging.error(message)
+                logging.error(tag_mac)
 
+            # 是否是新检测到的标签
+            if tag_mac_p in tag_mac_dict:
+                tag_mac_dict[tag_mac_p] = tag_battery_info
+            else:
+                tag_mac_dict[tag_mac_p] = tag_battery_info
+                myWin.addtext('********检测到新的标签********')
+                myWin.addtext('编号:'+str(len(tag_mac_dict)))
+                myWin.addtext('tag MAC:' + tag_mac_p)
+                print(1)
+                myWin.addtext('剩余电量：'+str(tag_battery_info)+'%')
+                print(2)
                 # 查询MAC对应的TAG ID
                 try:
                     # print(tag_mac)
@@ -68,7 +89,7 @@ async def consumer_handler(myWin):
                 # print(mac_id)
                 myWin.addtext('tag_id:' + tag_id)
                 myWin.addtext('---------------------------')
-                myWin.lcdNumber.display(str(len(tag_mac_set)))
+                myWin.lcdNumber.display(str(len(tag_mac_dict)))
 
 
 class MyMainForm(QMainWindow, Ui_Form):
@@ -108,7 +129,7 @@ def main(myWin):
 
 
 if __name__ == "__main__":
-    tag_mac_set = set()
+    tag_mac_dict = dict()
     app = QApplication(sys.argv)
     myWin = MyMainForm()
     myWin.show()
