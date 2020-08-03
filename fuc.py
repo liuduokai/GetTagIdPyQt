@@ -35,9 +35,15 @@ def get_tag_mac(message):
     return int(tag_id, 16)
 
 
+def is_alive_packge(message):
+    m_hex = message.hex()
+    tag_id_rev = m_hex[8:16]
+
 async def consumer_handler():
     async with websockets.connect('ws://10.44.68.179:6432/ws', ping_interval=None) as websocket:
         async for message in websocket:
+            # 检测获取到的是否为心跳包
+
             # 获取打印格式MAC
             try:
                 tag_mac_p = get_print_version_mac(message)

@@ -40,6 +40,7 @@ def get_print_version_mac(message):
 async def consumer_handler(myWin):
     async with websockets.connect('ws://10.44.68.179:6432/ws', ping_interval=None) as websocket:
         async for message in websocket:
+            print(message)
             try:
                 tag_mac_p = get_print_version_mac(message)
             except OSError as err:
@@ -73,9 +74,7 @@ async def consumer_handler(myWin):
                 myWin.addtext('********检测到新的标签********')
                 myWin.addtext('编号:'+str(len(tag_mac_dict)))
                 myWin.addtext('tag MAC:' + tag_mac_p)
-                print(1)
                 myWin.addtext('剩余电量：'+str(tag_battery_info)+'%')
-                print(2)
                 # 查询MAC对应的TAG ID
                 try:
                     # print(tag_mac)
