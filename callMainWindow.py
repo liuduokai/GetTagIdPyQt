@@ -35,60 +35,71 @@ def get_print_version_mac(message):
         i -= 1
     return tag_id_p
 
+def get_packge_type(message):
+    m_hex = message.hex()
+    tag_id_p_rev = m_hex[2:4]
+
+    return tag_id_p_rev
 
 # 主循环函数
 async def consumer_handler(myWin):
     async with websockets.connect('ws://10.44.68.179:6432/ws', ping_interval=None) as websocket:
         async for message in websocket:
-            print(message)
-            try:
-                tag_mac_p = get_print_version_mac(message)
-            except OSError as err:
-                logging.error("获取格式化MAC出错")
-                logging.error(message)
-                logging.error(tag_mac_p)
-
-            # 获取数字版本MAC
-            try:
-                tag_mac = fuc.get_tag_mac(message)
-            except OSError as err:
-                logging.error("获取mac id出现错误")
-                logging.error(err)
-                logging.error(message)
-                logging.error(tag_mac)
-
-            # 获取电量信息
-            try:
-                tag_battery_info = get_battery_info(message)
-            except OSError as err:
-                logging.error("获取battery info出现错误")
-                logging.error(err)
-                logging.error(message)
-                logging.error(tag_mac)
-
-            # 是否是新检测到的标签
-            if tag_mac_p in tag_mac_dict:
-                tag_mac_dict[tag_mac_p] = tag_battery_info
-            else:
-                tag_mac_dict[tag_mac_p] = tag_battery_info
-                myWin.addtext('********检测到新的标签********')
-                myWin.addtext('编号:'+str(len(tag_mac_dict)))
-                myWin.addtext('tag MAC:' + tag_mac_p)
-                myWin.addtext('剩余电量：'+str(tag_battery_info)+'%')
-                # 查询MAC对应的TAG ID
+            message_type = get_packge_type(message)
+            # 若为定位数据包
+            if message_type == "c5":
                 try:
-                    # print(tag_mac)
-                    tag_id = con_oracle.get_tag_id(tag_mac)
+                    tag_mac_p = get_print_version_mac(message)
                 except OSError as err:
-                    logging.error("获取tag id出现错误")
+                    logging.error("获取格式化MAC出错")
+                    logging.error(message)
+                    logging.error(tag_mac_p)
+
+                # 获取数字版本MAC
+                try:
+                    tag_mac = fuc.get_tag_mac(message)
+                except OSError as err:
+                    logging.error("获取mac id出现错误")
                     logging.error(err)
                     logging.error(message)
                     logging.error(tag_mac)
-                    logging.error(tag_id)
-                # print(mac_id)
-                myWin.addtext('tag_id:' + tag_id)
-                myWin.addtext('---------------------------')
-                myWin.lcdNumber.display(str(len(tag_mac_dict)))
+
+                # 获取电量信息
+                try:
+                    tag_battery_info = get_battery_info(message)
+                except OSError as err:
+                    logging.error("获取battery info出现错误")
+                    logging.error(err)
+                    logging.error(message)
+                    logging.error(tag_mac)
+
+                # 是否是新检测到的标签
+                if tag_mac_p in tag_mac_dict:
+                    tag_mac_dict[tag_mac_p] = tag_battery_info
+                else:
+                    tag_mac_dict[tag_mac_p] = tag_battery_info
+                    myWin.addtext('********检测到新的标签********')
+                    myWin.addtext('编号:'+str(len(tag_mac_dict)))
+                    myWin.addtext('tag MAC:' + tag_mac_p)
+                    myWin.addtext('剩余电量：'+str(tag_battery_info)+'%')
+                    # 查询MAC对应的TAG ID
+                    try:
+                        # print(tag_mac)
+                        tag_id = con_oracle.get_tag_id(tag_mac)
+                    except OSError as err:
+                        logging.error("获取tag id出现错误")
+                        logging.error(err)
+                        logging.error(message)
+                        logging.error(tag_mac)
+                        logging.error(tag_id)
+                    # print(mac_id)
+                    myWin.addtext('tag_id:' + tag_id)
+                    myWin.addtext('---------------------------')
+                    myWin.lcdNumber.display(str(len(tag_mac_dict)))
+            elif message_type == "c6":
+                print("获取到心跳包")
+            else:
+                print("获取到未知类型数据包")
 
 
 class MyMainForm(QMainWindow, Ui_Form):
